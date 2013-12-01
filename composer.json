@@ -1,0 +1,21 @@
+{
+    "name": "contrebis/blue-jeans",
+    "description": "A framework for implementing genetic algorithms",
+    "authors": [
+        {
+            "name": "Robert Churchill",
+            "email": "contact@robertchurchill.co.uk"
+        }
+    ],
+    "require": {
+        "doctrine/collections": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
