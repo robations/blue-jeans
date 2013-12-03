@@ -7,6 +7,6 @@ class GenomeFactory
 {
     function __invoke($data = null)
     {
-        return new Genome($data);
+        return new Genome($this, $data);
     }
 }

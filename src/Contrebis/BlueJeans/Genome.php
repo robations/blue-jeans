@@ -5,7 +5,9 @@ namespace Contrebis\BlueJeans;
 
 class Genome
 {
-    protected $_elite = false;
+    protected $elite = false;
+
+    protected $genomeFactory;
 
     /**
      * Royal road fitness function
@@ -17,7 +19,7 @@ class Genome
         return array_sum($this->data->getValues());
     }
 
-    public function __construct(array $data = null, $elite = false)
+    public function __construct(GenomeFactory $factory, array $data = null, $elite = false)
     {
         if ($data === null) {
             $data = new ListCollection();
@@ -28,12 +30,13 @@ class Genome
         } else {
             $this->data = new ListCollection($data);
         }
-        $this->_elite = $elite;
+        $this->elite = $elite;
+        $this->genomeFactory = $factory;
     }
     
     public function isElite()
     {
-        return $this->_elite;
+        return $this->elite;
     }
 
     /**
@@ -41,7 +44,7 @@ class Genome
      */
     public function setElite($value)
     {
-        $this->_elite = $value;
+        $this->elite = $value;
     }
 
     public function hash()
@@ -64,7 +67,7 @@ class Genome
         
     public function __toString()
     {
-        return implode($this->data);
+        return implode($this->data->getValues());
     }
         
     /**
@@ -87,7 +90,7 @@ class Genome
             }
         }
 
-        return new static($newData);
+        return $this->genomeFactory->__invoke($newData);
     }
                 
     public function getCrossover(Genome $other, $position = null)
@@ -103,9 +106,12 @@ class Genome
             $other->data->slice($position)->toArray()
         );
 
-        return new static($newData);
+        return $this->genomeFactory->__invoke($newData);
     }
 
+    /**
+     * @return bool Returns true if genome represents a valid solution to the problem
+     */
     public function isValid()
     {
         return true;

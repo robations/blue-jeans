@@ -4,6 +4,7 @@ namespace Contrebis\BlueJeans\Tsp;
 
 
 use Contrebis\BlueJeans\Genome;
+use Contrebis\BlueJeans\GenomeFactory;
 use Contrebis\BlueJeans\ListCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -182,16 +183,13 @@ class TspGenome extends Genome
         ],
     ];
 
-    public function __construct(array $data = null, $elite = false)
+    public function __construct(GenomeFactory $factory, array $data = null, $elite = false)
     {
         if ($data === null) {
-            $data = new ListCollection();
+            $data = [];
             for ($i = 0; $i < 16 * 4; $i++) {
-                $data->add(mt_rand(0, 1));
+                $data[] = mt_rand(0, 1);
             }
-            $this->data = $data;
-        } else {
-            $this->data = new ListCollection($data);
         }
         $this->_distances = (new ArrayCollection($this->_distances))
             ->map(
@@ -199,7 +197,7 @@ class TspGenome extends Genome
                     return new ArrayCollection($el);
                 }
             );
-        $this->_elite = $elite;
+        parent::__construct($factory, $data, $elite);
     }
 
     public function lookupDistance($city1, $city2)
