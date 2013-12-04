@@ -72,7 +72,7 @@ class Pool
         }
 
         for ($i = 0; $i < $poolSize - $elitism - $freshBlood; $i++) {
-            $rand = mt_rand(0, $totalFitness);
+            $rand = $totalFitness * lcg_value();
             for ($j = 0; $j < count($cumulKeys); $j++) {
                 if ($cumulKeys[$j] >= $rand) {
                     $newPool[] = $cumul[$j];

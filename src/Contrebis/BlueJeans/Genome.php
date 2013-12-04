@@ -16,19 +16,19 @@ class Genome
      */
     public function fitness()
     {
-        return array_sum($this->data->getValues());
+        return strpos($this->data, '1') !== false ? count_chars($this->data)[1] : 0;
     }
 
-    public function __construct(GenomeFactory $factory, array $data = null, $elite = false)
+    public function __construct(GenomeFactory $factory, $data = null, $elite = false)
     {
         if ($data === null) {
-            $data = new ListCollection();
+            $data = '';
             for ($i = 0; $i < 16; $i++) {
-                $data[] = mt_rand(0, 1);
+                $data .= mt_rand(0, 1);
             }
             $this->data = $data;
         } else {
-            $this->data = new ListCollection($data);
+            $this->data = $data;
         }
         $this->elite = $elite;
         $this->genomeFactory = $factory;
@@ -54,7 +54,7 @@ class Genome
 
     public function eq(Genome $other)
     {
-        return $this->data == $other->data;
+        return $this->data === $other->data;
     }
         
     public function cmp(Genome $other)
@@ -67,7 +67,7 @@ class Genome
         
     public function __toString()
     {
-        return implode($this->data->getValues());
+        return $this->data;
     }
         
     /**
@@ -81,30 +81,28 @@ class Genome
         if ($this->isElite()) {
             $prob = 0;
         }
-        $newData = array();
-        foreach ($this->data as $x) {
+        $newData = '';
+        for ($i = 0; $i < strlen($this->data); $i++) {
+            $x = (int) $this->data[$i];
             if (lcg_value() < $prob) {
-                $newData[] = $x ? 0 : 1;
+                $newData .= $x ? 0 : 1;
             } else {
-                $newData[] = $x;
+                $newData .= $x;
             }
         }
 
         return $this->genomeFactory->__invoke($newData);
     }
-                
+
     public function getCrossover(Genome $other, $position = null)
     {
         if ($this->isElite()) {
             return $this;
         }
         if ($position === null) {
-            $position = mt_rand(1, $this->data->count() - 1);
+            $position = mt_rand(1, strlen($this->data) - 1);
         }
-        $newData = array_merge(
-            $this->data->slice(0, $position)->toArray(),
-            $other->data->slice($position)->toArray()
-        );
+        $newData = substr($this->data, 0, $position) . substr($other, $position);
 
         return $this->genomeFactory->__invoke($newData);
     }

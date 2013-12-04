@@ -2,16 +2,11 @@
 
 namespace Contrebis\BlueJeans\Test;
 
-
 use Contrebis\BlueJeans\Genome;
-use Contrebis\BlueJeans\GenomeFactory;
 
 class GenomeTest extends \PHPUnit_Framework_TestCase
 {
-    public function getFactory()
-    {
-        return new GenomeFactory();
-    }
+    use GenomeFixture;
 
     public function testInstatiation()
     {
@@ -19,9 +14,9 @@ class GenomeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Contrebis\BlueJeans\Genome', $genome1);
 
         $genome2 = $this->getAllZerosGenome();
-        $this->assertEquals(str_pad('', 16, '0'), implode('', $genome2->data->getValues()));
+        $this->assertEquals(str_pad('', 16, '0'), $genome2->data);
 
-        $genome3 = new Genome($this->getFactory(), array_fill(0, 16, 0), true);
+        $genome3 = new Genome($this->getFactory(), str_pad('', 16, '0'), true);
         $this->assertEquals(true, $genome3->isElite());
     }
 
@@ -30,7 +25,7 @@ class GenomeTest extends \PHPUnit_Framework_TestCase
         $genome = $this->getAllZerosGenome();
 
         $mutated = $genome->getMutated(1);
-        $this->assertEquals(str_pad('', 16, '1'), implode('', $mutated->data->getValues()));
+        $this->assertEquals(str_pad('', 16, '1'), $mutated->data);
     }
 
     public function testCrossover()
@@ -39,16 +34,6 @@ class GenomeTest extends \PHPUnit_Framework_TestCase
         $genome2 = $this->getAllOnesGenome();
 
         $cross = $genome1->getCrossover($genome2, 8);
-        $this->assertEquals('0000000011111111', implode('', $cross->data->getValues()));
-    }
-
-    private function getAllZerosGenome()
-    {
-        return new Genome($this->getFactory(), array_fill(0, 16, 0));
-    }
-
-    private function getAllOnesGenome()
-    {
-        return new Genome($this->getFactory(), array_fill(0, 16, 1));
+        $this->assertEquals('0000000011111111', $cross->data);
     }
 }
