@@ -12,7 +12,7 @@ class Genome
     /**
      * Royal road fitness function
      *
-     * @return int
+     * @return int|float Must be >= 0 to allow proper comparison of genomes.
      */
     public function fitness()
     {

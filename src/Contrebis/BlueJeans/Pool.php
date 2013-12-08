@@ -63,11 +63,10 @@ class Pool
         $totalFitness = 0;
         $cumul = array();
         $cumulKeys = array();
-        $min = $this->getMinFitness();
 
         /* @var $x Genome */
         foreach ($this->_pool as $x) {
-            $totalFitness = $totalFitness + $x->fitness() - $min;
+            $totalFitness = $totalFitness + $x->fitness();
             $x->setElite(false);
             $cumul[] = $x;
             $cumulKeys[] = $totalFitness;

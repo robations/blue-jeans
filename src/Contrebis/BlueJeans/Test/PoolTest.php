@@ -103,7 +103,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase
 
     public function testPoolSize()
     {
-        $pool = new Pool(10, new NegativeGenomeFactory());
+        $pool = $this->getPool();
         $poolSize = $pool->_pool->count();
         for ($i = 0; $i < 10; $i++) {
             $pool = $pool->getSelectionPool(1, 0);
