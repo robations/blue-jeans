@@ -57,15 +57,15 @@ class ListCollection implements \ArrayAccess, \Countable, \Iterator
 
     public function remove($key)
     {
-        if (isset($this->_elements[$key]) || array_key_exists($key, $this->_elements)) {
-            $removed = $this->_elements[$key];
-            unset($this->_elements[$key]);
-            $this->_elements = array_values($this->_elements);
+        if (array_key_exists($key, $this->_elements)) {
+            $copy = $this->_elements;
+            unset($copy[$key]);
+            $copy = array_values($copy);
 
-            return $removed;
+            return new ListCollection($copy);
         }
 
-        return null;
+        return $this;
     }
 
     public function removeElement($element)
@@ -73,13 +73,14 @@ class ListCollection implements \ArrayAccess, \Countable, \Iterator
         $offset = array_search($element, $this->_elements, true);
 
         if ($offset !== false) {
-            unset($this->_elements[$offset]);
-            $this->_elements = array_values($this->_elements);
+            $copy = $this->_elements;
+            unset($copy[$offset]);
+            $copy = array_values($copy);
 
-            return true;
+            return new ListCollection($copy);
         }
 
-        return false;
+        return $this;
     }
 
     public function offsetExists($offset)
@@ -102,7 +103,8 @@ class ListCollection implements \ArrayAccess, \Countable, \Iterator
 
     public function offsetUnset($offset)
     {
-        return $this->remove($offset);
+        unset($this->_elements[$offset]);
+        $this->_elements = array_values($this->_elements);
     }
 
     public function containsKey($key)
@@ -243,12 +245,12 @@ class ListCollection implements \ArrayAccess, \Countable, \Iterator
      */
     public function __toString()
     {
-        return __CLASS__ . '@' . spl_object_hash($this);
+        return sprintf('[%s]', implode(', ', $this->_elements));
     }
 
     public function clear()
     {
-        $this->_elements = array();
+        return new ListCollection();
     }
 
     /**

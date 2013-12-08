@@ -9,7 +9,7 @@ class Pool
 {
 
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
+     * @var ListCollection
      */
     public $_pool;
 
@@ -38,10 +38,10 @@ class Pool
     public function __toString()
     {
         $mapStr = function ($item) {
-            return sprintf("%s: %d", $item, $item->fitness());
+            return $item->__toString();
         };
 
-        return sprintf("[%s]", implode(", ", $this->_pool->map($mapStr)->toArray()));
+        return sprintf("[\n%s\n]", implode(",\n", $this->_pool->map($mapStr)->toArray()));
     }
 
     public function getSelectionPool($elitism = 0, $freshBlood = 0)
@@ -127,7 +127,18 @@ class Pool
     public function getMaxFitness($valid = false)
     {
         return $this->_pool->filter(function (Genome $x) { return $x->isValid(); })
-            ->reduce(function ($initial, Genome $el) { return max($initial, $el->fitness()); }, -1);
+            ->reduce(function ($initial, Genome $el) { return max($initial, $el->fitness()); }, null);
+    }
+
+    public function getMinFitness()
+    {
+        return $this->_pool->
+            reduce(
+                function ($initial, Genome $el) {
+                    return min($el->fitness(), $initial);
+                },
+                true
+            );
     }
 
     public function getMeanFitness($valid = false)
@@ -166,9 +177,9 @@ class Pool
      */
     public function getDiversity()
     {
-        $summedCoords = array_fill(0, count($this->_genomeFactory->__invoke()->data), 0);
+        $summedCoords = array_fill(0, strlen($this->_genomeFactory->__invoke()->data), 0);
         foreach ($this->_pool as $x) {
-            foreach ($x->data as $i=>$y) {
+            foreach (str_split($x->data) as $i=>$y) {
                 $summedCoords[$i] = $summedCoords[$i] + $y;
             }
         }
@@ -184,7 +195,7 @@ class Pool
                     function ($y, $c) {
                         return ($y - $c) * ($y - $c);
                     },
-                    $x->data->toArray(),
+                    str_split($x->data),
                     $coords->toArray()
                 ));
             }

@@ -16,7 +16,7 @@ class Genome
      */
     public function fitness()
     {
-        return strpos($this->data, '1') !== false ? count_chars($this->data)[1] : 0;
+        return strpos($this->data, '1') !== false ? count_chars($this->data)[49] : 0;
     }
 
     public function __construct(GenomeFactory $factory, $data = null, $elite = false)

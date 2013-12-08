@@ -26,6 +26,10 @@ class GenomeTest extends \PHPUnit_Framework_TestCase
 
         $mutated = $genome->getMutated(1);
         $this->assertEquals(str_pad('', 16, '1'), $mutated->data);
+
+        $genome->setElite(true);
+        $genome2 = $genome->getMutated(1);
+        $this->assertTrue($genome2->eq($genome));
     }
 
     public function testCrossover()
@@ -35,5 +39,28 @@ class GenomeTest extends \PHPUnit_Framework_TestCase
 
         $cross = $genome1->getCrossover($genome2, 8);
         $this->assertEquals('0000000011111111', $cross->data);
+
+        $genome1->setElite(true);
+        $genome3 = $genome1->getCrossover($genome2);
+        $this->assertTrue($genome3->eq($genome1));
+    }
+
+    public function testHash()
+    {
+        $genome1 = $this->getAllZerosGenome();
+        $genome2 = $this->getAllZerosGenome();
+
+        $this->assertEquals($genome1->hash(), $genome2->hash());
+    }
+
+    public function testEquality()
+    {
+        $genome1 = $this->getAllZerosGenome();
+        $genome2 = $this->getAllZerosGenome();
+        $genome3 = $this->getAllOnesGenome();
+
+        $this->assertTrue($genome1->eq($genome2));
+        $this->assertFalse($genome2->eq($genome3));
+        $this->assertFalse($genome3->eq($genome1));
     }
 }
