@@ -13,9 +13,9 @@ class PoolTest extends \PHPUnit_Framework_TestCase
         return new GenomeFactory();
     }
 
-    private function getPool()
+    private function getPool($arg = 10)
     {
-        return new Pool(10, $this->getGenomeFactory());
+        return new Pool($arg, $this->getGenomeFactory());
     }
 
     public function testInstantiation()
@@ -99,5 +99,15 @@ class PoolTest extends \PHPUnit_Framework_TestCase
     {
         $pool = $this->getPool();
         $this->assertGreaterThan(0, $pool->getDiversity());
+    }
+
+    public function testPoolSize()
+    {
+        $pool = new Pool(10, new NegativeGenomeFactory());
+        $poolSize = $pool->_pool->count();
+        for ($i = 0; $i < 10; $i++) {
+            $pool = $pool->getSelectionPool(1, 0);
+            $this->assertEquals($poolSize, $pool->_pool->count());
+        }
     }
 }

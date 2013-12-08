@@ -63,14 +63,15 @@ class Pool
         $totalFitness = 0;
         $cumul = array();
         $cumulKeys = array();
+        $min = $this->getMinFitness();
+
         /* @var $x Genome */
         foreach ($this->_pool as $x) {
-            $totalFitness = $totalFitness + $x->fitness();
+            $totalFitness = $totalFitness + $x->fitness() - $min;
             $x->setElite(false);
             $cumul[] = $x;
             $cumulKeys[] = $totalFitness;
         }
-
         for ($i = 0; $i < $poolSize - $elitism - $freshBlood; $i++) {
             $rand = $totalFitness * lcg_value();
             for ($j = 0; $j < count($cumulKeys); $j++) {
